@@ -14,7 +14,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 
 app.get('/text', (req, res, next) => {
-  res.json({text: 'This text came from backend.'})
+  res.json({text: 'Backend is ON'})
 })
 
 app.use(express.static(path.join(__dirname, 'build')))
