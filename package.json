@@ -1,5 +1,5 @@
 {
-  "name": "reactjs-express",
+  "name": "full-text-search-algolia",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
