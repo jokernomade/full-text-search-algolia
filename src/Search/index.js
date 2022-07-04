@@ -1,163 +1,46 @@
-import {useState} from 'react'
-import { Input, Form, FormGroup, Row, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, Label } from "reactstrap"
+import {useEffect, useState} from 'react'
+import { Container, Input, Form, FormGroup, Row, Col, Button } from "reactstrap"
+import Results from "../Results"
+import AddModal from "../AddModal"
 
-const AddModal = (props) => {
-  const [name,setName] = useState('')
-  const [experience,setExperience] = useState('')
-  const [hashtags,setHashtags] = useState([])
-  const [saving,setSaving] = useState(false)
+const Search = () => {
+  const [showModal,setShowModal] = useState(false)
+  const [data,setData] = useState([])
 
-  const cleanup = async() => {
-    setName('')
-    setExperience('')
-    setHashtags([])
-    setSaving(false)
+  const toggle = async () => setShowModal(!showModal)
+
+  const initAsync = async () => {
+
   }
 
-  const isValid = () => name && name.length && experience && experience.length
-
-  const save = async () => {
-    try{
-      if(!isValid()) {
-        alert('Campos obrigatórios: Nome e Experiência.')
-      }
-
-      const data = {name:name,experience:experience,hashtags:hashtags}
-
-      const response = await fetch('http://localhost:5000/dev',{ 
-        method: 'POST',
-        body: JSON.stringify({data:data}),
-        headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-      })
-      
-      if(response.code===200){
-        props.onSave(data)
-        alert('Dev adicionado com sucesso')
-      }
-
-      cleanup()
-      props.toggle()
-    }catch(e){
-      alert(`Erro ao adicionar dev: ${e}`)
-      setSaving(false)
-    }
-  }
-
-  const onChangeTags = (e) => {
-    const value = e.target.value.toLowerCase()
-
-    if(!value.length) setHashtags([])
-
-    if(!value.match(/^[a-z,]+$/) || hashtags.length>3 || value.split(',').length===4){
-      return
-    }
-    
-    setHashtags(value.split(','))
-  }
+  useEffect(()=>{
+    initAsync()
+    return () => {}
+  },[])
 
   return (
-    <Modal toggle={()=>{cleanup();props.toggle()}} isOpen={props.isOpen}>
-      <ModalHeader toggle={()=>props.toggle()}>
-        Novo dev
-      </ModalHeader>
-      <ModalBody>
-        {
-          saving ? 
-          <span>Salvando...</span>
-          :
+    <Container md={10}>
+      <Row>
+        <AddModal isOpen={showModal} toggle={toggle} />
+        <Col>
           <Form>
             <FormGroup>
-              <Label for="name">
-                Nome do programador
-              </Label>
-              <Input
-                style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
-                id="name"
-                name="text"
-                placeholder="Nome completo"
-                plaintext
-                value={name}
-                onChange={(e)=>setName(e.target.value)}
-              />
-              <span style={{fontSize:12}}>* obrigatório</span>
-            </FormGroup>
-            <FormGroup>
-              <Label for="experience">
-                Experiência
-              </Label>
-              <Input
-                style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
-                id="experience"
-                name="text"
-                type="textarea"
-                placeholder='Descreva a experiência profissional'
-                value={experience}
-                onChange={(e)=>setExperience(e.target.value)}
-              />
-              <span style={{fontSize:12}}>* obrigatório</span>
-            </FormGroup>
-            <FormGroup>
-              <Label for="experience">
-                Tags
-              </Label>
               <Input
                 style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
                 id="text"
                 name="text"
-                placeholder="Adicione até 3 tags"
-                value={hashtags.join(',')}
-                onChange={(e)=>onChangeTags(e)}
+                placeholder="Procurar"
                 plaintext
               />
-              <span style={{fontSize:12}}>Separe as tags com vírgula (,)</span>
             </FormGroup>
           </Form>
-        }
-      </ModalBody>
-      <ModalFooter>
-        <Button onClick={()=>props.toggle()}>
-          Cancelar
-        </Button>
-        {' '}
-        {
-          isValid() && 
-          <Button color="primary" onClick={()=>{setSaving(true);save()}}>
-            Salvar
-          </Button>
-        }
-      </ModalFooter>
-    </Modal>
-  )
-}
-
-const Search = () => {
-  const [showModal,setShowModal] = useState(false)
-
-  const toggle = async () => setShowModal(!showModal)
-
-  return (
-    <Row>
-      <AddModal isOpen={showModal} toggle={toggle} />
-      <Col md={10}>
-        <Form>
-          <FormGroup>
-            <Input
-              style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
-              id="text"
-              name="text"
-              placeholder="Procurar"
-              plaintext
-            />
-          </FormGroup>
-        </Form>
-      </Col>
-      <Col md={2}>
-        <Button color="primary" style={{padding:10}} onClick={()=>toggle()}>Adicionar</Button>
-      </Col>
-    </Row>
+        </Col>
+        <Col md={2}>
+          <Button color="primary" style={{padding:10}} onClick={()=>toggle()} onSave={(obj)=>setData([...obj,...data])}>Adicionar</Button>
+        </Col>
+      </Row>
+      <Results data={data} />
+    </Container>
   )
 }
 
