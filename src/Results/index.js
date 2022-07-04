@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Row, Col, Card, CardBody, CardTitle, CardSubtitle, CardText } from "reactstrap"
 import { FiTrash2 } from "react-icons/fi"
 
 const Results = (props) => {
-  const [data,setData] = useState(props.data)
+  const data = props.data
 
   const deleteItem = async (item) => {
     if(window.confirm("Remover esse dev ?")){
@@ -15,11 +15,15 @@ const Results = (props) => {
         }
       })
       if(response.status===200){
-        setData(data.filter(d=>d.id!==item.id))
+        if(props.onDelete) props.onDelete(item)
         alert('Dev removido com sucesso')
       }
     }
   }
+
+  useEffect(()=>{
+    return () => {}
+  },[])
 
   const renderItem = (item) => <div style={{marginBottom:10}} key={item.id}>
     <Card>
