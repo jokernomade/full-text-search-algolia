@@ -1,5 +1,6 @@
 # full-text-search-algolia
-Full text search com Algolia em 1 minuto
+Full text search com Algolia em 1 minuto. Crie uma conta no Algolia e substitua as chaves ou utilize as chaves desse projeto enquanto estiverem disponíveis.
+
 
 # executar servidor
 `yarn server`
@@ -17,4 +18,3 @@ Todos os registros serão exibidos se nada for digitado
 # Search suggestion real-time
 A busca é realizada (nos campos nome, experiência, tags) enquanto digita a pesquisa
 <img width="1440" alt="Screen Shot 2022-07-04 at 03 10 48" src="https://user-images.githubusercontent.com/3135444/177092737-324a3dea-0398-483f-85f1-cee95e62276f.png">
-
