@@ -2,11 +2,11 @@ const algoliasearch = require("algoliasearch")
 
 const config = {
   algoliaAppId: 'WGNZ0VGP2J',
-  algoliaAPIKey: '9053ab60736a925901b7da6a26adc196',
-  algoliaIndexName: 'prod_global'
+  algoliaAPIKey: '4dbc74f4fff3a429e87ac419e275c46a',
+  algoliaIndexName: '365codigo'
 }
 
-const client = algoliasearch.default(config.algoliaAppId, config.algoliaAPIKey)
+const client = algoliasearch(config.algoliaAppId, config.algoliaAPIKey)
 const index = client.initIndex(config.algoliaIndexName)
 
 exports.saveOrUpdateDocument = async (data) => {
@@ -20,3 +20,4 @@ exports.saveOrUpdateDocument = async (data) => {
 exports.deleteDocument = async (id) => {
   await index.deleteObject(id)
 }
+

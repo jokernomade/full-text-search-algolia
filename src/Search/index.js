@@ -4,28 +4,29 @@ import { Input, Form, FormGroup, Row, Col, Button, Modal, ModalHeader, ModalBody
 const AddModal = (props) => {
   const [name,setName] = useState('')
   const [experience,setExperience] = useState('')
-  const [tags,setTags] = useState('')
+  const [hashtags,setHashtags] = useState([])
+  const [saving,setSaving] = useState(false)
 
   const cleanup = async() => {
     setName('')
     setExperience('')
-    setTags('')
+    setHashtags([])
+    setSaving(false)
   }
 
   const isValid = () => name && name.length && experience && experience.length
 
   const save = async () => {
-    props.toggle()
-
     try{
       if(!isValid()) {
         alert('Campos obrigatórios: Nome e Experiência.')
       }
 
-      const data = {name:name,experience:experience,tags:tags}
+      const data = {name:name,experience:experience,hashtags:hashtags}
 
-      const response = await fetch('http://localhost:5000/add',{ 
-        body: data,
+      const response = await fetch('http://localhost:5000/dev',{ 
+        method: 'POST',
+        body: JSON.stringify({data:data}),
         headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -36,28 +37,25 @@ const AddModal = (props) => {
         props.onSave(data)
         alert('Dev adicionado com sucesso')
       }
+
+      cleanup()
+      props.toggle()
     }catch(e){
       alert(`Erro ao adicionar dev: ${e}`)
+      setSaving(false)
     }
-
   }
 
   const onChangeTags = (e) => {
     const value = e.target.value.toLowerCase()
 
-    if(!value.length) setTags(value)
+    if(!value.length) setHashtags([])
 
-    if(!value.match(/^[a-z,]+$/)){
+    if(!value.match(/^[a-z,]+$/) || hashtags.length>3 || value.split(',').length===4){
       return
     }
-    const splitted = value.split(',')
-    if(splitted.length<4){
-      if(splitted===4) {
-        setTags(splitted.filter(d=>!!d.length).join(','))
-        return
-      } 
-      setTags(value)
-    }
+    
+    setHashtags(value.split(','))
   }
 
   return (
@@ -66,53 +64,58 @@ const AddModal = (props) => {
         Novo dev
       </ModalHeader>
       <ModalBody>
-        <Form>
-          <FormGroup>
-            <Label for="name">
-              Nome do programador
-            </Label>
-            <Input
-              style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
-              id="name"
-              name="text"
-              placeholder="Nome completo"
-              plaintext
-              value={name}
-              onChange={(e)=>setName(e.target.value)}
-            />
-            <span style={{fontSize:12}}>* obrigatório</span>
-          </FormGroup>
-          <FormGroup>
-            <Label for="experience">
-              Experiência
-            </Label>
-            <Input
-              style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
-              id="experience"
-              name="text"
-              type="textarea"
-              placeholder='Descreva a experiência profissional'
-              value={experience}
-              onChange={(e)=>setExperience(e.target.value)}
-            />
-            <span style={{fontSize:12}}>* obrigatório</span>
-          </FormGroup>
-          <FormGroup>
-            <Label for="experience">
-              Tags
-            </Label>
-            <Input
-              style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
-              id="text"
-              name="text"
-              placeholder="Adicione até 3 tags"
-              value={tags.replace(/\s+/g,' ').replace(/\,+/g,',')}
-              onChange={(e)=>onChangeTags(e)}
-              plaintext
-            />
-            <span style={{fontSize:12}}>Separe as tags com vírgula (,)</span>
-          </FormGroup>
-        </Form>
+        {
+          saving ? 
+          <span>Salvando...</span>
+          :
+          <Form>
+            <FormGroup>
+              <Label for="name">
+                Nome do programador
+              </Label>
+              <Input
+                style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
+                id="name"
+                name="text"
+                placeholder="Nome completo"
+                plaintext
+                value={name}
+                onChange={(e)=>setName(e.target.value)}
+              />
+              <span style={{fontSize:12}}>* obrigatório</span>
+            </FormGroup>
+            <FormGroup>
+              <Label for="experience">
+                Experiência
+              </Label>
+              <Input
+                style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
+                id="experience"
+                name="text"
+                type="textarea"
+                placeholder='Descreva a experiência profissional'
+                value={experience}
+                onChange={(e)=>setExperience(e.target.value)}
+              />
+              <span style={{fontSize:12}}>* obrigatório</span>
+            </FormGroup>
+            <FormGroup>
+              <Label for="experience">
+                Tags
+              </Label>
+              <Input
+                style={{borderColor:'#000',borderWidth:1,borderRadius:5,padding:10}}
+                id="text"
+                name="text"
+                placeholder="Adicione até 3 tags"
+                value={hashtags.join(',')}
+                onChange={(e)=>onChangeTags(e)}
+                plaintext
+              />
+              <span style={{fontSize:12}}>Separe as tags com vírgula (,)</span>
+            </FormGroup>
+          </Form>
+        }
       </ModalBody>
       <ModalFooter>
         <Button onClick={()=>props.toggle()}>
@@ -121,7 +124,7 @@ const AddModal = (props) => {
         {' '}
         {
           isValid() && 
-          <Button color="primary" onClick={()=>save}>
+          <Button color="primary" onClick={()=>{setSaving(true);save()}}>
             Salvar
           </Button>
         }
