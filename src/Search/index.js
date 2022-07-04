@@ -43,10 +43,10 @@ const AddModal = (props) => {
   }
 
   const onChangeTags = (e) => {
-
-console.log(e.keyCode)
-
     const value = e.target.value.toLowerCase()
+
+    if(!value.length) setTags(value)
+
     if(!value.match(/^[a-z,]+$/)){
       return
     }
