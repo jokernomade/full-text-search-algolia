@@ -4,7 +4,7 @@ const client = algoliasearch('WGNZ0VGP2J', 'd4ab8889c9c4c96a275d0aef841f26cc')
 const index = client.initIndex('365codigo');
 
 export default class Algolia {
-  static search = async (text,limit) => {
+  static search = async (text) => {
     try{
       const {hits} = await index.search(text,{hitsPerPage: 20})
       const results = []
@@ -12,21 +12,15 @@ export default class Algolia {
       hits.forEach(hit => {
         results.push({
           id: hit.objectID,
-          type: 'account',
-          name: hit.title,
-          description: hit.desc,
-          thumb: hit.thumb,
-          display: {
-            title: hit.title,
-            description: hit.desc,
-            thumb: hit.thumb
-          }
+          name: hit.name,
+          experience: hit.experience,
+          hashtags: hit.hashtags
         })
       })
-      
-      return results.slice(0,limit)
-    }catch(e){
 
+      return results
+    }catch(e){
+      
     }
     return []
   }

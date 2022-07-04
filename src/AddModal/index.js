@@ -28,9 +28,9 @@ const AddModal = (props) => {
         method: 'POST',
         body: JSON.stringify({data:data}),
         headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
       })
       
       if(response.status===200){

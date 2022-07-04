@@ -1,22 +1,42 @@
-import {useEffect, useState} from 'react'
+import { useState } from "react"
 import { Row, Col, Card, CardBody, CardTitle, CardSubtitle, CardText } from "reactstrap"
+import { FiTrash2 } from "react-icons/fi"
 
 const Results = (props) => {
-  const [data,setData] = useState(props.data || [])
+  const [data,setData] = useState(props.data)
 
-  useEffect(()=>{
-    return () => {}
-  },[])
+  const deleteItem = async (item) => {
+    if(window.confirm("Remover esse dev ?")){
+      const response = await fetch(`http://localhost:5000/dev/${item.id}`,{ 
+        method: 'DELETE',
+        headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+        }
+      })
+      if(response.status===200){
+        setData(data.filter(d=>d.id!==item.id))
+        alert('Dev removido com sucesso')
+      }
+    }
+  }
 
-  const renderItem = (item) => <div>
+  const renderItem = (item) => <div style={{marginBottom:10}} key={item.id}>
     <Card>
       <CardBody>
-        <CardTitle tag="h5">
-          {item.name}
-        </CardTitle>
+        <Row>
+          <Col md={11}>
+            <CardTitle tag="h5" style={{fontWeight:'bold'}}>
+              {item.name}
+            </CardTitle>
+          </Col>
+          <Col md={1} onClick={(e)=>{deleteItem(item);e.preventDefault();e.stopPropagation();}}>
+            <FiTrash2 style={{fontSize:16}} />
+          </Col>
+        </Row>
         {
-          item.hashtags.length &&
-          <CardSubtitle className="mb-2 text-muted" tag="h6">
+          item.hashtags.length>0 &&
+          <CardSubtitle className="mb-2 text-muted" tag="h6" style={{fontWeight:'normal'}}>
             {item.hashtags.map(tag=>`#${tag} `)}
           </CardSubtitle>
         }
@@ -28,7 +48,7 @@ const Results = (props) => {
   </div>
 
   return (
-    <Row>
+    <Row  style={{textAlign:'left'}}>
       <Col md={10}>
         { data.map(item=>renderItem(item)) }
       </Col>

@@ -27,6 +27,14 @@ app.post('/dev', async (req, res, next) => {
   res.json({id: data.objectID})
 })
 
+app.delete('/dev/:id', async (req, res, next) => {
+  const {id} = req.params
+  console.log(id)
+  await deleteDocument(id)
+
+  res.json({})
+})
+
 app.use(express.static(path.join(__dirname, 'build')))
 app.use(logErrors)
 
