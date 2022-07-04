@@ -29,7 +29,7 @@ app.post('/dev', async (req, res, next) => {
 
 app.delete('/dev/:id', async (req, res, next) => {
   const {id} = req.params
-  console.log(id)
+
   await deleteDocument(id)
 
   res.json({})
